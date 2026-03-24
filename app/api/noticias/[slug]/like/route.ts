@@ -14,8 +14,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
     try {
         await connectDB();
-        const userEmail = session.user.email; // Usaremos el email como identificador
-
+        const userEmail = session.user.email as string;
         const news = await News.findOne({ slug });
         if (!news) return NextResponse.json({ error: 'Noticia no encontrada' }, { status: 404 });
 
@@ -28,6 +27,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
             hasLiked ? { $pull: { likes: userEmail } } : { $push: { likes: userEmail } },
             { new: true }
         );
+
+        // ¡AQUÍ ESTÁ LA MAGIA! Le decimos a TypeScript qué hacer si es nulo
+        if (!updatedNews) {
+            return NextResponse.json({ error: 'Error al actualizar los likes' }, { status: 500 });
+        }
 
         return NextResponse.json({ success: true, likes: updatedNews.likes.length, hasLiked: !hasLiked });
     } catch (error: any) {
