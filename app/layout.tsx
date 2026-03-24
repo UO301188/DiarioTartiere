@@ -23,10 +23,10 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: 'Real Oviedo Noticias — El diario azul',
+  title: 'Diario Tartiere — El diario del Real Oviedo',
   description: 'Todas las noticias, partidos y actualidad del Real Oviedo CF. Información diaria del equipo carbayón.',
   openGraph: {
-    title: 'Real Oviedo Noticias',
+    title: 'Diario Tartiere',
     description: 'El diario digital del Real Oviedo',
     locale: 'es_ES',
     type: 'website',
