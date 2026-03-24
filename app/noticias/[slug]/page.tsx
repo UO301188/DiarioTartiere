@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import NewsCard from '@/components/NewsCard';
 import { connectDB } from '@/lib/mongodb';
 import News from '@/lib/models/News';
-
+import Comments from '@/components/Comments';
 const FALLBACK = 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=1200&q=80';
 
 interface NewsItem {
@@ -20,6 +20,7 @@ interface NewsItem {
   category: string;
   author: string;
   createdAt: string;
+  comments?: any[];
 }
 
 // 1. Buscamos directo en la Base de Datos (Más rápido y sin fallos de URL)
@@ -157,9 +158,13 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
                     className="text-xs text-oviedo-gray"
                     style={{ fontFamily: 'var(--font-barlow)' }}
                 >
-                Real Oviedo Noticias
+                Diario Tartiere
               </span>
               </div>
+
+              {/* AQUI AÑADIMOS LA CAJA DE COMENTARIOS */}
+              <Comments slug={slug} initialComments={noticia.comments || []} />
+
             </article>
 
             {/* ── SIDEBAR ── */}

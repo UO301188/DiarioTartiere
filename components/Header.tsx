@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import SideMenu from './SideMenu';
 
 const categories = ['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
 
@@ -52,21 +53,27 @@ export default async function Header() {
 
 
         {/* Cabecera principal */}
-        <div className="bg-oviedo-blue text-white py-5 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Logo Nuevo */}
-            <Link href="/" className="inline-block group">
-              <div className="bg-white rounded-md p-2 shadow-lg flex-shrink-0 transition-transform group-hover:scale-105">
-                <Image
-                    src="/logo.png"
-                    alt="Diario Tartiere"
-                    width={200}
-                    height={70}
-                    priority
-                    className="w-40 md:w-56 h-auto object-contain"
-                />
-              </div>
-            </Link>
+            <div className="bg-oviedo-blue text-white py-5 px-4">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+
+                    {/* AQUI ESTÁ EL CAMBIO: Agrupamos el menú y el logo */}
+                    <div className="flex items-center gap-4">
+                        <SideMenu session={session} categories={categories} />
+
+                        {/* Logo Nuevo */}
+                        <Link href="/" className="inline-block group">
+                            <div className="bg-white rounded-md p-2 shadow-lg flex-shrink-0 transition-transform group-hover:scale-105">
+                                <Image
+                                    src="/logo.png"
+                                    alt="Diario Tartiere"
+                                    width={200}
+                                    height={70}
+                                    priority
+                                    className="w-40 md:w-56 h-auto object-contain"
+                                />
+                            </div>
+                        </Link>
+                    </div>
 
             {/* Lema */}
             <div className="hidden md:block text-right">
@@ -74,7 +81,7 @@ export default async function Header() {
                 &ldquo;¡Vamos, Oviedo!&rdquo;
               </p>
               <p className="text-white/60 text-xs mt-1" style={{ fontFamily: 'var(--font-barlow)' }}>
-                La voz del Tartiere desde la red
+                La voz del Tartiere
               </p>
             </div>
           </div>
@@ -101,8 +108,8 @@ export default async function Header() {
         </span>
           <div className="overflow-hidden flex-1">
           <span className="ticker-content text-oviedo-ink text-xs font-semibold" style={{ fontFamily: 'var(--font-barlow)' }}>
-            &nbsp;&nbsp;⚽&nbsp; Diario Tartiere — Toda la actualidad del equipo carbayón, temporada a temporada &nbsp;|&nbsp;
-            🏟️&nbsp; Estadio Carlos Tartiere — La fortaleza azul del norte &nbsp;|&nbsp;
+            &nbsp;&nbsp;⚽&nbsp; Diario Tartiere — Toda la actualidad del equipo carbayón &nbsp;|&nbsp;
+            🏟️&nbsp; Estadio Carlos Tartiere  &nbsp;|&nbsp;
             📰&nbsp; Bienvenido al diario digital del Real Oviedo &nbsp;&nbsp;
           </span>
           </div>
