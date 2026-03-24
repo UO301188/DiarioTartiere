@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "seed": "tsx scripts/seed.ts"
@@ -11,6 +11,8 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^17.3.1",
+    "mongodb": "3.7",
     "mongoose": "^8.4.0",
     "next": "^16.2.1",
     "next-auth": "^4.24.7",

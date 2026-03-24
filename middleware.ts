@@ -1,6 +1,11 @@
-export { default } from 'next-auth/middleware';
+import { withAuth } from 'next-auth/middleware';
 
-// Solo protege las rutas que empiecen por /admin
+export default withAuth({
+  pages: {
+    signIn: '/login',
+  },
+});
+
 export const config = {
   matcher: ['/admin/:path*'],
 };

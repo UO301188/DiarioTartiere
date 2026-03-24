@@ -13,13 +13,23 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Contraseña', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('🔐 Intentando login con:', credentials?.email);
         if (!credentials?.email || !credentials?.password) return null;
 
-        await connectDB();
+        try {
+          await connectDB();
+          console.log('✅ DB conectada');
+        } catch (err) {
+          console.error('❌ Error conectando DB:', err);
+          return null;
+        }
+
         const user = await User.findOne({ email: credentials.email });
+        console.log('👤 Usuario encontrado:', user ? user.email : 'NO ENCONTRADO');
         if (!user) return null;
 
         const valid = await bcrypt.compare(credentials.password, user.password);
+        console.log('🔑 Contraseña válida:', valid);
         if (!valid) return null;
 
         return { id: user._id.toString(), email: user.email, name: user.name, role: user.role };

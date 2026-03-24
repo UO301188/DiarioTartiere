@@ -22,8 +22,8 @@
 /* ── Componentes reutilizables ── */
 @layer components {
   .category-badge {
-    @apply inline-block font-sans text-xs font-700 uppercase tracking-widest px-2 py-0.5
-           bg-oviedo-blue text-white;
+    @apply inline-block font-sans text-xs font-bold uppercase tracking-widest px-2 py-0.5
+    bg-oviedo-blue text-white;
     font-family: var(--font-barlow), sans-serif;
     font-weight: 600;
   }
@@ -33,8 +33,8 @@
   }
 
   .btn-primary {
-    @apply bg-oviedo-blue hover:bg-oviedo-blueDark text-white font-sans font-600
-           px-5 py-2.5 transition-colors duration-200;
+    @apply bg-oviedo-blue hover:bg-oviedo-blueDark text-white font-sans font-semibold
+    px-5 py-2.5 transition-colors duration-200;
     font-family: var(--font-barlow), sans-serif;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -43,15 +43,15 @@
   }
 
   .btn-danger {
-    @apply bg-red-600 hover:bg-red-700 text-white font-sans font-600
-           px-4 py-2 transition-colors duration-200 text-sm;
+    @apply bg-red-600 hover:bg-red-700 text-white font-sans font-semibold
+    px-4 py-2 transition-colors duration-200 text-sm;
     font-family: var(--font-barlow), sans-serif;
     font-weight: 600;
   }
 
   .input-field {
     @apply w-full border border-oviedo-lightGray bg-white px-3 py-2.5
-           text-sm focus:outline-none focus:border-oviedo-blue transition-colors duration-150;
+    text-sm focus:outline-none focus:border-oviedo-blue transition-colors duration-150;
     font-family: var(--font-source-serif), Georgia, serif;
   }
 
@@ -103,7 +103,7 @@
 
 /* ── Admin ── */
 .admin-sidebar-link {
-  @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-150;
+  @apply flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors duration-150;
   font-family: var(--font-barlow), sans-serif;
   font-weight: 600;
   letter-spacing: 0.04em;
