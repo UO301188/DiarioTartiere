@@ -19,7 +19,7 @@ export default function Footer() {
               Real Oviedo Noticias
             </h3>
             <p className="text-white/60 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-barlow)' }}>
-              El diario digital independiente dedicado al Real Oviedo CF. Información, análisis y pasión carbayona.
+              El diario digital independiente dedicado al Real Oviedo. Información, análisis y pasión carbayona.
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function Footer() {
           className="text-center text-white/40 text-xs"
           style={{ fontFamily: 'var(--font-barlow)', letterSpacing: '0.06em' }}
         >
-          © {year} Real Oviedo Noticias · Proyecto independiente de aficionados · No afiliado al Real Oviedo CF
+          © {year} Real Oviedo Noticias · Proyecto independiente de aficionados · No afiliado al Real Oviedo
         </p>
       </div>
     </footer>

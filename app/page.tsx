@@ -137,13 +137,9 @@ export default async function HomePage({
                                 <div className="sticky top-4">
 
                                     {/* WIDGETS DE FÚTBOL (Clasificación y Resultados) */}
-                                    <Suspense fallback={<div className="h-40 bg-gray-100 animate-pulse mb-6 rounded border border-gray-200"></div>}>
-                                        <StandingsTable />
-                                    </Suspense>
-
-                                    <Suspense fallback={<div className="h-40 bg-gray-100 animate-pulse mb-6 rounded border border-gray-200"></div>}>
-                                        <RecentMatches />
-                                    </Suspense>
+                                    {/* Ahora se renderizan directamente sin Suspense */}
+                                    <StandingsTable />
+                                    <RecentMatches />
 
                                     {/* Última Hora */}
                                     <div className="bg-oviedo-blue p-4 mb-1">
