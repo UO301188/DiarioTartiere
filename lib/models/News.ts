@@ -18,7 +18,8 @@ export interface INews extends Document {
     category: string;
     featured: boolean;
     author: string;
-    comments: IComment[]; // <-- Añadimos el array de comentarios
+    comments: IComment[];
+    likes: string[]; // <-- FIX: Añadimos likes aquí para que TypeScript lo conozca
     createdAt: Date;
     updatedAt: Date;
 }
@@ -44,7 +45,8 @@ const NewsSchema = new Schema<INews>(
         },
         featured: { type: Boolean, default: false },
         author:   { type: String, default: 'Redacción' },
-        comments: [CommentSchema], // <-- Lo incrustamos en la noticia
+        comments: [CommentSchema],
+        likes: [{ type: String }],
     },
     { timestamps: true }
 );

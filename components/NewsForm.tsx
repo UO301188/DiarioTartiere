@@ -1,6 +1,7 @@
 'use client';
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import RichTextEditor from './RichTextEditor';
 
 interface NewsFormProps {
   mode: 'create' | 'edit';
@@ -128,14 +129,14 @@ export default function NewsForm({ mode, id, initial }: NewsFormProps) {
             <label className="block text-xs font-semibold uppercase tracking-widest text-oviedo-gray mb-1.5" style={{ fontFamily: 'var(--font-barlow)' }}>
               Contenido completo *
             </label>
-            <textarea
-              required
-              rows={18}
-              className="input-field resize-y font-body"
-              placeholder="Escribe aquí el cuerpo de la noticia. Puedes usar saltos de línea para párrafos..."
-              value={form.content}
-              onChange={(e) => update('content', e.target.value)}
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-widest text-oviedo-gray mb-1">Contenido de la Noticia</label>
+              {/* Reemplazamos el textarea tradicional por nuestro nuevo editor */}
+              <RichTextEditor
+                  value={form.content}
+                  onChange={(val) => update('content', val)}
+              />
+            </div>
           </div>
         </div>
 

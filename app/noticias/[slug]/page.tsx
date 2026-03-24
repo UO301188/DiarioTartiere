@@ -8,6 +8,10 @@ import NewsCard from '@/components/NewsCard';
 import { connectDB } from '@/lib/mongodb';
 import News from '@/lib/models/News';
 import Comments from '@/components/Comments';
+import SocialBar from '@/components/SocialBar';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
 const FALLBACK = 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=1200&q=80';
 
 interface NewsItem {
@@ -21,9 +25,10 @@ interface NewsItem {
   author: string;
   createdAt: string;
   comments?: any[];
+  likes?: string[]; // <-- FIX: Añadimos likes aquí también
 }
 
-// 1. Buscamos directo en la Base de Datos (Más rápido y sin fallos de URL)
+// 1. Buscamos directo en la Base de Datos
 async function getNoticia(slug: string): Promise<NewsItem | null> {
   try {
     await connectDB();
@@ -46,13 +51,13 @@ async function getRelated(): Promise<NewsItem[]> {
   }
 }
 
-// 2. Await en los params (Requisito indispensable de Next.js 15)
+// 2. Metadata para el SEO (Twitter, WhatsApp preview...)
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const noticia = await getNoticia(slug);
   if (!noticia) return { title: 'Noticia no encontrada' };
   return {
-    title: `${noticia.title} — Real Oviedo Noticias`,
+    title: `${noticia.title} — Diario Tartiere`,
     description: noticia.summary,
     openGraph: {
       title: noticia.title,
@@ -68,12 +73,19 @@ function formatDate(iso: string) {
   });
 }
 
-// 3. El componente ahora lee los params de forma asíncrona
+// 3. El componente principal
 export default async function NoticiaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [noticia, related] = await Promise.all([getNoticia(slug), getRelated()]);
 
+  // IMPORTANTE: Primero comprobamos que hay noticia antes de buscar sus likes
   if (!noticia) notFound();
+
+  // Gestión de Likes y Sesión
+  const session = await getServerSession(authOptions);
+  const userEmail = session?.user?.email;
+  const hasLiked = userEmail && noticia.likes ? noticia.likes.includes(userEmail) : false;
+  const totalLikes = noticia.likes ? noticia.likes.length : 0;
 
   // Filtra la noticia actual de las relacionadas
   const relatedFiltered = related.filter((n) => n.slug !== slug).slice(0, 3);
@@ -139,10 +151,18 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
                 />
               </div>
 
-              {/* Contenido */}
+              {/* Contenido HTML generado por el Editor Enriquecido */}
               <div
                   className="article-content"
-                  dangerouslySetInnerHTML={{ __html: noticia.content.replace(/\n/g, '<br/>') }}
+                  dangerouslySetInnerHTML={{ __html: noticia.content }}
+              />
+
+              {/* BARRA SOCIAL: Likes y botones de compartir */}
+              <SocialBar
+                  slug={slug}
+                  title={noticia.title}
+                  initialLikes={totalLikes}
+                  initialHasLiked={hasLiked}
               />
 
               {/* Footer del artículo */}
@@ -162,7 +182,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
               </span>
               </div>
 
-              {/* AQUI AÑADIMOS LA CAJA DE COMENTARIOS */}
+              {/* CAJA DE COMENTARIOS */}
               <Comments slug={slug} initialComments={noticia.comments || []} />
 
             </article>
