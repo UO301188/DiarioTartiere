@@ -12,8 +12,9 @@ async function getNoticia(id: string) {
   }
 }
 
-export default async function EditarNoticiaPage({ params }: { params: { id: string } }) {
-  const noticia = await getNoticia(params.id);
+export default async function EditarNoticiaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const noticia = await getNoticia(id);
   if (!noticia) notFound();
 
   return (
@@ -36,7 +37,7 @@ export default async function EditarNoticiaPage({ params }: { params: { id: stri
 
       <NewsForm
         mode="edit"
-        id={params.id}
+        id={id}
         initial={{
           title:      noticia.title,
           summary:    noticia.summary,
