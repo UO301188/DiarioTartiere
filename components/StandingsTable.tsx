@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react'
 
 interface TeamStanding {
-    rank: number
-    team: { id: number; name: string; logo: string }
+    position: number
+    team: { id: number; name: string; crest: string }
     points: number
-    goalsDiff: number
-    all: { played: number; win: number; draw: number; lose: number }
+    goalDifference: number
+    playedGames: number
+    won: number
+    draw: number
+    lost: number
 }
 
 export default function StandingsTable() {
@@ -19,17 +22,14 @@ export default function StandingsTable() {
         fetch('/api/standings')
             .then(r => r.json())
             .then(data => {
-                // Evitamos que 'pete' si la API devuelve un error (un objeto en vez de un array)
                 if (data.error || !Array.isArray(data)) {
-                    console.error("Error de API Standings:", data);
                     setError('No se pudo cargar la clasificación');
                 } else {
                     setStandings(data);
                 }
                 setLoading(false);
             })
-            .catch((e) => {
-                console.error("Error catch Standings:", e);
+            .catch(() => {
                 setError('No se pudo cargar la clasificación');
                 setLoading(false);
             })
@@ -60,7 +60,6 @@ export default function StandingsTable() {
                     </thead>
                     <tbody>
                     {standings.map((row) => {
-                        // Usamos optional chaining (?.) por si falta algún dato
                         const isOviedo = row?.team?.name?.toLowerCase().includes('oviedo')
                         return (
                             <tr
@@ -68,26 +67,26 @@ export default function StandingsTable() {
                                 className={`border-b transition-colors ${
                                     isOviedo
                                         ? 'bg-blue-100 font-semibold border-blue-300'
-                                        : row.rank <= 4
+                                        : row.position <= 4
                                             ? 'bg-green-50'
-                                            : row.rank >= 18
+                                            : row.position >= 18
                                                 ? 'bg-red-50'
                                                 : 'hover:bg-gray-50'
                                 }`}
                             >
-                                <td className="py-2 px-2 text-center text-gray-600">{row.rank}</td>
+                                <td className="py-2 px-2 text-center text-gray-600">{row.position}</td>
                                 <td className="py-2 px-2">
                                     <div className="flex items-center gap-2">
-                                        <img src={row?.team?.logo} alt={row?.team?.name} className="w-5 h-5 object-contain" />
+                                        <img src={row?.team?.crest} alt={row?.team?.name} className="w-5 h-5 object-contain" />
                                         <span className={isOviedo ? 'text-blue-900 font-bold' : ''}>{row?.team?.name}</span>
                                     </div>
                                 </td>
-                                <td className="py-2 px-2 text-center">{row?.all?.played}</td>
-                                <td className="py-2 px-2 text-center text-green-700">{row?.all?.win}</td>
-                                <td className="py-2 px-2 text-center text-gray-500">{row?.all?.draw}</td>
-                                <td className="py-2 px-2 text-center text-red-600">{row?.all?.lose}</td>
+                                <td className="py-2 px-2 text-center">{row?.playedGames}</td>
+                                <td className="py-2 px-2 text-center text-green-700">{row?.won}</td>
+                                <td className="py-2 px-2 text-center text-gray-500">{row?.draw}</td>
+                                <td className="py-2 px-2 text-center text-red-600">{row?.lost}</td>
                                 <td className="py-2 px-2 text-center">
-                                    {row.goalsDiff > 0 ? `+${row.goalsDiff}` : row.goalsDiff}
+                                    {row.goalDifference > 0 ? `+${row.goalDifference}` : row.goalDifference}
                                 </td>
                                 <td className="py-2 px-2 text-center font-bold text-blue-900">{row.points}</td>
                             </tr>
