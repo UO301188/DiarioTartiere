@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Tipografía base ── */
+@layer base {
+  body {
+    font-family: var(--font-source-serif), Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #0D0D1A;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-playfair), Georgia, serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ── Componentes reutilizables ── */
+@layer components {
+  .category-badge {
+    @apply inline-block font-sans text-xs font-700 uppercase tracking-widest px-2 py-0.5
+           bg-oviedo-blue text-white;
+    font-family: var(--font-barlow), sans-serif;
+    font-weight: 600;
+  }
+
+  .category-badge--gold {
+    @apply bg-oviedo-gold text-oviedo-ink;
+  }
+
+  .btn-primary {
+    @apply bg-oviedo-blue hover:bg-oviedo-blueDark text-white font-sans font-600
+           px-5 py-2.5 transition-colors duration-200;
+    font-family: var(--font-barlow), sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-sans font-600
+           px-4 py-2 transition-colors duration-200 text-sm;
+    font-family: var(--font-barlow), sans-serif;
+    font-weight: 600;
+  }
+
+  .input-field {
+    @apply w-full border border-oviedo-lightGray bg-white px-3 py-2.5
+           text-sm focus:outline-none focus:border-oviedo-blue transition-colors duration-150;
+    font-family: var(--font-source-serif), Georgia, serif;
+  }
+
+  .divider-line {
+    @apply border-t-2 border-oviedo-blue mb-4;
+  }
+}
+
+/* ── Ticker de noticias ── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.ticker-content {
+  display: inline-block;
+  animation: ticker-scroll 35s linear infinite;
+  white-space: nowrap;
+}
+
+/* ── Card hover ── */
+.news-card-img {
+  transition: transform 0.4s ease;
+}
+.group:hover .news-card-img {
+  transform: scale(1.04);
+}
+
+/* ── Contenido artículo ── */
+.article-content p {
+  margin-bottom: 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.article-content h2 {
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+  color: #003F8A;
+}
+
+.article-content blockquote {
+  border-left: 4px solid #003F8A;
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #4B5563;
+}
+
+/* ── Admin ── */
+.admin-sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-150;
+  font-family: var(--font-barlow), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.admin-sidebar-link:hover {
+  @apply bg-white/10;
+}
+
+.admin-sidebar-link.active {
+  @apply bg-oviedo-gold text-oviedo-ink;
+}
+
+/* Scrollbar sutil */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1ee; }
+::-webkit-scrollbar-thumb { background: #003F8A; }

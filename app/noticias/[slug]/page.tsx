@@ -1,0 +1,208 @@
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import NewsCard from '@/components/NewsCard';
+
+const FALLBACK = 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=1200&q=80';
+
+interface NewsItem {
+  _id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  content: string;
+  coverImage?: string;
+  category: string;
+  author: string;
+  createdAt: string;
+}
+
+async function getNoticia(slug: string): Promise<NewsItem | null> {
+  const base = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+  try {
+    const res = await fetch(`${base}/api/noticias/${slug}`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+async function getRelated(): Promise<NewsItem[]> {
+  const base = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+  try {
+    const res = await fetch(`${base}/api/noticias?limit=4`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.news ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const noticia = await getNoticia(params.slug);
+  if (!noticia) return { title: 'Noticia no encontrada' };
+  return {
+    title: `${noticia.title} — Real Oviedo Noticias`,
+    description: noticia.summary,
+    openGraph: {
+      title: noticia.title,
+      description: noticia.summary,
+      images: noticia.coverImage ? [noticia.coverImage] : [],
+    },
+  };
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('es-ES', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  });
+}
+
+export default async function NoticiaPage({ params }: { params: { slug: string } }) {
+  const [noticia, related] = await Promise.all([getNoticia(params.slug), getRelated()]);
+  if (!noticia) notFound();
+
+  // Filtra la noticia actual de las relacionadas
+  const relatedFiltered = related.filter((n) => n.slug !== params.slug).slice(0, 3);
+
+  return (
+    <>
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Miga de pan */}
+        <nav className="flex items-center gap-2 text-xs text-oviedo-gray mb-6" style={{ fontFamily: 'var(--font-barlow)' }}>
+          <Link href="/" className="hover:text-oviedo-blue transition-colors">Portada</Link>
+          <span>›</span>
+          <Link href={`/?category=${encodeURIComponent(noticia.category)}`} className="hover:text-oviedo-blue transition-colors">
+            {noticia.category}
+          </Link>
+          <span>›</span>
+          <span className="text-oviedo-ink line-clamp-1">{noticia.title}</span>
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* ── ARTÍCULO ── */}
+          <article className="lg:col-span-2">
+            {/* Cabecera del artículo */}
+            <div className="mb-6">
+              <span className="category-badge mb-3 inline-block">{noticia.category}</span>
+              <h1
+                className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-4"
+                style={{ fontFamily: 'var(--font-playfair)' }}
+              >
+                {noticia.title}
+              </h1>
+              <p
+                className="text-xl text-oviedo-gray leading-relaxed border-l-4 border-oviedo-blue pl-4"
+                style={{ fontFamily: 'var(--font-source-serif)', fontStyle: 'italic' }}
+              >
+                {noticia.summary}
+              </p>
+
+              {/* Metadata del artículo */}
+              <div
+                className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-oviedo-lightGray text-sm text-oviedo-gray"
+                style={{ fontFamily: 'var(--font-barlow)' }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-oviedo-blue rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    {noticia.author.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="font-semibold">{noticia.author}</span>
+                </div>
+                <span>·</span>
+                <time className="capitalize">{formatDate(noticia.createdAt)}</time>
+              </div>
+            </div>
+
+            {/* Imagen de portada */}
+            <div className="relative w-full h-64 md:h-96 mb-8 overflow-hidden">
+              <Image
+                src={noticia.coverImage || FALLBACK}
+                alt={noticia.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* Contenido */}
+            <div
+              className="article-content"
+              dangerouslySetInnerHTML={{ __html: noticia.content.replace(/\n/g, '<br/>') }}
+            />
+
+            {/* Footer del artículo */}
+            <div className="mt-8 pt-6 border-t-2 border-oviedo-lightGray flex items-center justify-between">
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-oviedo-blue text-sm font-semibold hover:underline"
+                style={{ fontFamily: 'var(--font-barlow)' }}
+              >
+                ← Volver a portada
+              </Link>
+              <span
+                className="text-xs text-oviedo-gray"
+                style={{ fontFamily: 'var(--font-barlow)' }}
+              >
+                Real Oviedo Noticias
+              </span>
+            </div>
+          </article>
+
+          {/* ── SIDEBAR ── */}
+          <aside className="lg:col-span-1">
+            <div className="sticky top-4 space-y-8">
+              {/* Noticias relacionadas */}
+              <div>
+                <div className="bg-oviedo-blue px-4 py-3 mb-3">
+                  <h3
+                    className="text-white text-sm font-bold uppercase tracking-widest"
+                    style={{ fontFamily: 'var(--font-barlow)', fontWeight: 700 }}
+                  >
+                    Otras noticias
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  {relatedFiltered.map((n) => (
+                    <NewsCard key={n._id} {...n} size="small" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Widget del equipo */}
+              <div className="bg-oviedo-blue text-white p-5">
+                <h3
+                  className="text-oviedo-gold font-bold text-sm uppercase tracking-widest mb-4"
+                  style={{ fontFamily: 'var(--font-barlow)', fontWeight: 700 }}
+                >
+                  El Club
+                </h3>
+                <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-barlow)' }}>
+                  <li className="flex items-center gap-2">
+                    <span className="text-oviedo-gold">🏟️</span> Carlos Tartiere, Oviedo
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-oviedo-gold">📅</span> Fundado en 1926
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-oviedo-gold">👕</span> Azul y blanco
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-oviedo-gold">🏆</span> LaLiga Hypermotion
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
