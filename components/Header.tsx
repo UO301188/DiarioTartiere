@@ -1,27 +1,55 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 const categories = ['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
 
-export default function Header() {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('es-ES', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  });
+export default async function Header() {
+    const session = await getServerSession(authOptions);
+    // Extraemos el rol de forma segura
+    const userRole = session?.user ? (session.user as any).role : null;
 
-  return (
-      <header>
-        {/* Franja superior */}
-        <div className="bg-oviedo-ink text-white py-1 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('es-ES', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    });
+
+    return (
+        <header>
+            {/* Franja superior inteligente */}
+            <div className="bg-oviedo-ink text-white py-1 px-4">
+                <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
           <span className="capitalize" style={{ fontFamily: 'var(--font-barlow)', letterSpacing: '0.06em' }}>
             {dateStr}
           </span>
-            <Link href="/login" className="hover:text-oviedo-gold transition-colors" style={{ fontFamily: 'var(--font-barlow)', letterSpacing: '0.06em' }}>
-              Admin ↗
-            </Link>
-          </div>
-        </div>
+
+                    <div className="flex items-center gap-4" style={{ fontFamily: 'var(--font-barlow)', letterSpacing: '0.06em' }}>
+                        {session ? (
+                            <>
+                                <span className="text-white/60">Hola, <span className="text-white">{session.user?.name}</span></span>
+
+                                {/* 🤫 Este botón SOLO lo ves tú */}
+                                {userRole === 'admin' && (
+                                    <Link href="/admin" className="text-oviedo-gold hover:text-white transition-colors uppercase font-bold">
+                                        Panel Admin ↗
+                                    </Link>
+                                )}
+
+                                {/* Botón rápido para salir desde la portada (usando ruta API nativa de NextAuth) */}
+                                <Link href="/api/auth/signout?callbackUrl=/" className="text-white/40 hover:text-red-400 transition-colors uppercase">
+                                    Salir
+                                </Link>
+                            </>
+                        ) : (
+                            <Link href="/login" className="hover:text-oviedo-gold transition-colors uppercase">
+                                Identificarse
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            </div>
+
 
         {/* Cabecera principal */}
         <div className="bg-oviedo-blue text-white py-5 px-4">
