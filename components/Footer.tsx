@@ -58,7 +58,7 @@ export default function Footer() {
               <li>🏟️ Estadio Carlos Tartiere, Oviedo</li>
               <li>📅 Fundado: 1926</li>
               <li>🎨 Colores: Azul y Blanco</li>
-              <li>🏆 LaLiga Hypermotion</li>
+              <li>🏆 LaLiga EA Sports</li>
             </ul>
           </div>
         </div>
