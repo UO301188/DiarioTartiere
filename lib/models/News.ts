@@ -40,8 +40,8 @@ const NewsSchema = new Schema<INews>(
         coverImage: { type: String, default: '' },
         category:   {
             type: String,
-            enum: ['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'],
-            default: 'Primera División',
+            enum: ['Segunda División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'],
+            default: 'Segunda División',
         },
         featured: { type: Boolean, default: false },
         author:   { type: String, default: 'Redacción' },

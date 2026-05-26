@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import SideMenu from './SideMenu';
 
-const categories = ['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
+const categories = ['Segunda División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
 
 export default async function Header() {
     const session = await getServerSession(authOptions);

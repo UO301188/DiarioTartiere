@@ -89,7 +89,7 @@ async function seed() {
         summary:    'Los carbayones firmaron una segunda parte espectacular en el Carlos Tartiere y consiguieron dar la vuelta al marcador en los minutos finales.',
         content:    'El Real Oviedo vivió una tarde de emociones en el estadio Carlos Tartiere. Tras ir perdiendo al descanso, el equipo azul salió con una actitud radicalmente diferente en la segunda mitad y logró la épica remontada.\n\nEl primer gol llegó en el minuto 65 tras una gran jugada colectiva que terminó con un potente disparo que batió al portero rival. El empate desató la locura en las gradas.\n\nA falta de cinco minutos, en una acción a balón parado, el cabezazo definitivo provocó el estallido del Tartiere. Tres puntos de oro que permiten al Oviedo seguir soñando con los puestos de ascenso.',
         coverImage: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80',
-        category:   'Primera División',
+        category:   'Segunda División',
         featured:   true,
         author:     'Redacción Deportiva',
       },

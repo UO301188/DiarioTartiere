@@ -17,14 +17,14 @@ interface NewsFormProps {
   };
 }
 
-const CATEGORIES = ['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
+const CATEGORIES = ['Segunda División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'];
 
 const DEFAULT = {
   title:      '',
   summary:    '',
   content:    '',
   coverImage: '',
-  category:   'Primera División',
+  category:   'Segunda División',
   featured:   false,
   author:     'Redacción',
 };

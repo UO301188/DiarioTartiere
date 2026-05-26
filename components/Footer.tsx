@@ -32,7 +32,7 @@ export default function Footer() {
               Secciones
             </h4>
             <ul className="space-y-2">
-              {['Primera División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'].map((cat) => (
+              {['Segunda División', 'Copa del Rey', 'Fichajes', 'Cantera', 'Opinión', 'Historia'].map((cat) => (
                 <li key={cat}>
                   <Link
                     href={`/?category=${encodeURIComponent(cat)}`}
