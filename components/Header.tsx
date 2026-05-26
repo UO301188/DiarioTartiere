@@ -56,7 +56,7 @@ export default async function Header() {
             <div className="bg-oviedo-blue text-white py-5 px-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-                    {/* AQUI ESTÁ EL CAMBIO: Agrupamos el menú y el logo */}
+                    {/* Agrupamos el menú y el logo */}
                     <div className="flex items-center gap-4">
                         <SideMenu session={session} categories={categories} />
 

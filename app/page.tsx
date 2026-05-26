@@ -1,4 +1,6 @@
 import { Suspense } from 'react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import NewsCard from '@/components/NewsCard';
@@ -18,15 +20,11 @@ interface NewsItem {
     createdAt: string;
 }
 
-// 1. Buscamos directo en la Base de Datos (Igual que en la noticia individual)
 async function getNews(category?: string): Promise<NewsItem[]> {
     try {
         await connectDB();
         const filter = category ? { category } : {};
-        // Traemos las últimas 20 noticias ordenadas de más nueva a más vieja
         const news = await News.find(filter).sort({ createdAt: -1 }).limit(20).lean();
-
-        // Serializamos para que React pase los datos al cliente sin problemas
         return JSON.parse(JSON.stringify(news));
     } catch (error) {
         console.error("Error cargando noticias en portada:", error);
@@ -58,7 +56,6 @@ function CategoryStrip({ news }: { news: NewsItem[] }) {
     );
 }
 
-// 2. Await en los searchParams (Requisito de Next.js 15)
 export default async function HomePage({
                                            searchParams,
                                        }: {
@@ -67,7 +64,12 @@ export default async function HomePage({
     const params = await searchParams;
     const category = params.category;
 
-    const news = await getNews(category);
+    const [news, session] = await Promise.all([
+        getNews(category),
+        getServerSession(authOptions),
+    ]);
+
+    const isAdmin = session?.user?.role === 'admin';
 
     const hero      = news[0];
     const secondary = news.slice(1, 4);
@@ -80,7 +82,6 @@ export default async function HomePage({
             <Header />
             <main className="max-w-7xl mx-auto px-4 py-8">
 
-                {/* Filtro activo */}
                 {category && (
                     <div className="flex items-center gap-3 mb-6">
                         <div className="divider-line flex-shrink-0 w-8" />
@@ -97,7 +98,6 @@ export default async function HomePage({
                 )}
 
                 {news.length === 0 ? (
-                    /* Estado vacío */
                     <div className="text-center py-24">
                         <div className="text-6xl mb-4">⚽</div>
                         <h2
@@ -106,20 +106,20 @@ export default async function HomePage({
                         >
                             Aún no hay noticias publicadas
                         </h2>
-                        <p className="text-oviedo-gray mb-6" style={{ fontFamily: 'var(--font-barlow)' }}>
-                            Accede al panel de administración para publicar la primera noticia.
-                        </p>
-                        <a href="/login" className="btn-primary inline-block">Ir al panel</a>
+                        {isAdmin && (
+                            <>
+                                <p className="text-oviedo-gray mb-6" style={{ fontFamily: 'var(--font-barlow)' }}>
+                                    Accede al panel de administración para publicar la primera noticia.
+                                </p>
+                                <a href="/login" className="btn-primary inline-block">Ir al panel</a>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <>
-                        {/* ══ BLOQUE PRINCIPAL ══ */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* Hero + secundarias */}
                             <div className="lg:col-span-2">
                                 {hero && <NewsCard {...hero} size="hero" />}
-
-                                {/* Secundarias en fila */}
                                 {secondary.length > 0 && (
                                     <div className="mt-6">
                                         <div className="divider-line" />
@@ -132,16 +132,10 @@ export default async function HomePage({
                                 )}
                             </div>
 
-                            {/* Columna lateral — Más leídas y Widgets */}
                             <aside className="lg:col-span-1">
                                 <div className="sticky top-4">
-
-                                    {/* WIDGETS DE FÚTBOL (Clasificación y Resultados) */}
-                                    {/* Ahora se renderizan directamente sin Suspense */}
                                     <StandingsTable />
                                     <RecentMatches />
-
-                                    {/* Última Hora */}
                                     <div className="bg-oviedo-blue p-4 mb-1">
                                         <h3
                                             className="text-white font-bold text-sm uppercase tracking-widest"
@@ -160,12 +154,10 @@ export default async function HomePage({
                             </aside>
                         </div>
 
-                        {/* ══ BANDA DE CATEGORÍAS ══ */}
                         <Suspense>
                             <CategoryStrip news={news} />
                         </Suspense>
 
-                        {/* ══ GRID TERCIARIO ══ */}
                         {tertiary.length > 0 && (
                             <section className="mt-10">
                                 <div className="divider-line" />
@@ -183,7 +175,6 @@ export default async function HomePage({
                             </section>
                         )}
 
-                        {/* ══ LISTA ADICIONAL ══ */}
                         {rest.length > 0 && (
                             <section className="mt-10 max-w-2xl">
                                 <div className="divider-line" />
