@@ -42,7 +42,7 @@ export default function StandingsTable() {
     return (
         <section className="my-8">
             <h2 className="text-2xl font-bold mb-4 text-blue-900 border-b-2 border-blue-800 pb-2">
-                📊 Clasificación Liga EaSports 2025/26
+                📊Clasificación LaLiga Hypermotion 26-27
             </h2>
             <div className="overflow-x-auto rounded-lg shadow">
                 <table className="w-full text-sm">
