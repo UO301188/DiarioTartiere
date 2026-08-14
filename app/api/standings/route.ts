@@ -15,6 +15,7 @@ export async function GET() {
     const data = await res.json()
 
     if (data.errors && Object.keys(data.errors).length > 0) {
+        console.log("Error detallado de API-Football:", data.errors)
         return NextResponse.json({ error: 'Error API-Football' }, { status: 500 })
     }
 
