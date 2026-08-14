@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
+    // 141 = LaLiga Hypermotion (Segunda División)
     const res = await fetch(
-        'https://api.football-data.org/v4/competitions/SD/standings?season=2026',
+        'https://v3.football.api-sports.io/standings?league=141&season=2026',
         {
             headers: {
-                'X-Auth-Token': process.env.FOOTBALL_DATA_KEY || 'c1de3797368e4b3bb333295c99318aa8',
+                'x-apisports-key': process.env.API_FOOTBALL_KEY || '',
             },
             next: { revalidate: 3600 },
         }
@@ -13,10 +14,27 @@ export async function GET() {
 
     const data = await res.json()
 
-    if (data.errorCode || data.error) {
-        return NextResponse.json({ error: data.message || 'Error API' }, { status: 500 })
+    if (data.errors && Object.keys(data.errors).length > 0) {
+        return NextResponse.json({ error: 'Error API-Football' }, { status: 500 })
     }
 
-    const table = data.standings?.[0]?.table ?? []
+    const rawStandings = data.response?.[0]?.league?.standings?.[0] || []
+
+    // Mapeo para mantener compatibilidad con la interfaz TeamStanding de tu UI
+    const table = rawStandings.map((row: any) => ({
+        position: row.rank,
+        team: {
+            id: row.team.id,
+            name: row.team.name,
+            crest: row.team.logo
+        },
+        points: row.points,
+        goalDifference: row.goalsDiff,
+        playedGames: row.all.played,
+        won: row.all.win,
+        draw: row.all.draw,
+        lost: row.all.lose
+    }))
+
     return NextResponse.json(table)
 }

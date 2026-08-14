@@ -1,32 +1,56 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
+    // league=141 (Hypermotion), team=798 (Real Oviedo), last=5 (Últimos 5 resultados)
     const res = await fetch(
-        'https://api.football-data.org/v4/competitions/SD/matches?season=2026',
+        'https://v3.football.api-sports.io/fixtures?league=141&season=2026&team=798&last=5',
         {
             headers: {
-                'X-Auth-Token': process.env.FOOTBALL_DATA_KEY || 'c1de3797368e4b3bb333295c99318aa8',
+                'x-apisports-key': process.env.API_FOOTBALL_KEY || '',
             },
-            next: { revalidate: 1800 },
+            next: { revalidate: 3600 },
         }
     )
 
     const data = await res.json()
 
-    if (data.errorCode || data.error) {
-        return NextResponse.json({ error: data.message || 'Error API' }, { status: 500 })
+    if (data.errors && Object.keys(data.errors).length > 0) {
+        return NextResponse.json({ error: 'Error API-Football' }, { status: 500 })
     }
 
-    const matches = data.matches ?? []
+    const rawMatches = data.response || []
 
-    // Filtramos para quedarnos solo con los del Oviedo y sacamos los últimos 5
-    const oviedoMatches = matches
-        .filter((m: any) =>
-            m.homeTeam?.name.toLowerCase().includes('oviedo') ||
-            m.awayTeam?.name.toLowerCase().includes('oviedo')
-        )
-        .slice(-5)
-        .reverse() // Para que el más reciente salga arriba
+    // Mapeo para mantener compatibilidad con la interfaz Match de tu UI
+    const matches = rawMatches.map((m: any) => {
+        let winnerStatus = null;
+        if (m.teams.home.winner === true) winnerStatus = 'HOME_TEAM';
+        else if (m.teams.away.winner === true) winnerStatus = 'AWAY_TEAM';
+        else if (m.teams.home.winner === false && m.teams.away.winner === false) winnerStatus = 'DRAW';
 
-    return NextResponse.json(oviedoMatches)
+        // Extraer el número de jornada de textos como "Regular Season - 14"
+        const matchdayNumber = parseInt(m.league.round.replace(/[^0-9]/g, '')) || 0;
+
+        return {
+            id: m.fixture.id,
+            utcDate: m.fixture.date,
+            matchday: matchdayNumber,
+            homeTeam: {
+                name: m.teams.home.name,
+                crest: m.teams.home.logo
+            },
+            awayTeam: {
+                name: m.teams.away.name,
+                crest: m.teams.away.logo
+            },
+            score: {
+                winner: winnerStatus,
+                fullTime: {
+                    home: m.goals.home,
+                    away: m.goals.away
+                }
+            }
+        }
+    })
+
+    return NextResponse.json(matches)
 }
